@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expected Points in Basketball — Dimitrios Kotsis</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0e;
+    --surface: #141418;
+    --border: #25252d;
+    --text: #e8e6e1;
+    --text-muted: #8a8a95;
+    --accent: #d16a3a;
+    --accent-dim: rgba(232, 112, 58, 0.12);
+    --green: #4ade80;
+    --red: #d06868;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- HERO --- */
+  .hero {
+    padding: 100px 24px 72px;
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(232,112,58,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-bottom: 28px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(36px, 5.5vw, 56px);
+    line-height: 1.12;
+    letter-spacing: -0.5px;
+    margin-bottom: 28px;
+  }
+
+  h1 em { color: var(--accent); font-style: italic; }
+
+  .meta {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+
+  .meta span + span::before {
+    content: '·';
+    margin: 0 10px;
+  }
+
+  /* --- ARTICLE --- */
+  article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  article p {
+    margin-bottom: 24px;
+    color: #d0cec9;
+  }
+
+  article h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 30px;
+    margin: 64px 0 20px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  article h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 18px;
+    margin: 40px 0 12px;
+    color: var(--text);
+  }
+
+  /* --- PULLQUOTE --- */
+  .pullquote {
+    border-left: 3px solid var(--accent);
+    padding: 20px 0 20px 28px;
+    margin: 40px 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  /* --- FORMULA --- */
+  .formula-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 32px 0;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text-muted);
+    overflow-x: auto;
+  }
+  .formula-block .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .formula-block code {
+    color: var(--text);
+    font-size: 15px;
+  }
+
+  /* --- STAT CARDS --- */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 36px 0;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .stat-card .number {
+    font-family: var(--serif);
+    font-size: 36px;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--mono);
+  }
+
+  /* --- TABLE --- */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 32px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: var(--mono);
+  }
+  thead { background: var(--surface); }
+  th {
+    text-align: left;
+    padding: 14px 16px;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  .positive { color: var(--green); }
+  .negative { color: var(--red); }
+
+  /* --- INSIGHT BOX --- */
+  .insight {
+    background: var(--accent-dim);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 32px 0;
+    font-size: 15px;
+  }
+  .insight strong { color: var(--accent); }
+
+  /* --- FOOTER --- */
+  .article-footer {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: var(--mono);
+  }
+
+  @media (max-width: 600px) {
+    .stat-row { grid-template-columns: 1fr; }
+    .hero { padding: 64px 20px 48px; }
+    article { padding: 0 20px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="tag">Sports Analytics</div>
+  <h1>Bringing Expected Goals to Basketball: an <em>xPts</em> Framework</h1>
+  <div class="meta">
+    <span>Dimitrios Kotsis</span>
+    <span>May 2025</span>
+    <span>12 min read</span>
+  </div>
+</header>
+
+<article>
+
+<p>In football, expected goals (xG) has transformed how analysts evaluate performance. Rather than judging a team by goals scored alone, xG assigns a probability to every shot based on its context&mdash;distance, angle, assist type&mdash;and aggregates those probabilities into a truer picture of quality. It separates skill from luck, revealing which teams create great chances and which simply get fortunate bounces.</p>
+
+<p>No equivalent framework existed for basketball. This project set out to build one from scratch: an <strong>Expected Points (xPts)</strong> model for the NBA, trained on over four million shots spanning 1997&ndash;2020, that estimates how many points each shot <em>should</em> have been worth given its context.</p>
+
+<h2>Why Traditional Stats Fall Short</h2>
+
+<p>Field goal percentage (FG%) and points per game (PPG) are the go-to numbers for judging a scorer. But they're blind to context. A contested fadeaway three with two seconds on the clock is treated identically to a wide-open dunk. Looking at individual feature distributions&mdash;distance, time remaining, FG%&mdash;confirms the problem: the overlap between makes and misses is enormous. No single variable cleanly separates good from bad shots. What matters is how features interact together.</p>
+
+<p>To understand why, consider LeBron James's 2018&ndash;19 season. His FG% gives one number. But mapping his shot success rate by court zone reveals dramatic variation&mdash;elite efficiency near the rim, mediocre from mid-range, streaky from three. That spatial story is invisible in aggregate stats. A multivariate model captures it.</p>
+
+<h2>The Model</h2>
+
+<p>The xPts model is an XGBoost classifier that predicts whether each shot will go in, using features that fall into four categories.</p>
+
+<h3>Spatial Features</h3>
+<p>Shot distance from the basket (Euclidean, from player coordinates), court zone (a 3&times;3 grid of the attacking half), and shot type. The NBA recognises over 50 distinct shot types&mdash;each with its own geometry and difficulty. A hook shot, taken perpendicular to the basket with a sweeping motion, is mechanically harder than a catch-and-shoot from the same spot.</p>
+
+<h3>Contextual Features</h3>
+<p>Time remaining in the game (in seconds), and whether the shooter was playing at home or away. As the clock winds down, possessions grow heavier, defences tighten, and shot quality drops&mdash;the "clutch" effect that analysts obsess over.</p>
+
+<h3>Offensive Rating</h3>
+<p>Unlike football xG models, which typically ignore who takes the shot, the talent gap between NBA players is too large to overlook. Each player receives an offensive rating derived from the previous season's points per shot, FG%, and turnover rate.</p>
+
+<h3>Defensive Rating</h3>
+<p>A custom team-level defensive metric quantifies how hard the opposing team makes it to score, focusing specifically on factors that affect shot quality:</p>
+
+<div class="formula-block">
+  <span class="label">Custom Defensive Rating</span>
+  <code>FM = DFG% × (1 − DOR%) / [DFG% × (1 − DOR%) + (1 − DFG%) × DOR%]</code><br>
+  <code>DefRating = BLK × FM × (1 − 1.07 × DOR%) + DRB × (1 − FM)</code><br><br>
+  DFG% = opponent FG%&ensp;|&ensp;DOR% = opponent offensive rebound %&ensp;|&ensp;BLK = blocks/game&ensp;|&ensp;DRB = defensive rebounds/game
+</div>
+
+<p>Steals and turnovers were deliberately excluded&mdash;they end possessions before a shot happens and therefore don't affect shot quality directly.</p>
+
+<h3>Psychological Features</h3>
+<p>Two factors that are rarely modelled in sports prediction. <strong>Recent form</strong> captures short-term momentum by looking at a player's output over the preceding games, complementing the season-long offensive rating. <strong>Player fatigue</strong> is approximated by recent travel load and consecutive away games&mdash;a rough but novel proxy.</p>
+
+<h2>Results</h2>
+
+<p>The XGBoost model was compared against a PPG baseline and a Random Forest classifier using accuracy and AUC (area under the ROC curve).</p>
+
+<div class="stat-row">
+  <div class="stat-card">
+    <span class="number">64.3%</span>
+    <span class="label">XGBoost Accuracy</span>
+  </div>
+  <div class="stat-card">
+    <span class="number">0.677</span>
+    <span class="label">XGBoost AUC</span>
+  </div>
+  <div class="stat-card">
+    <span class="number">4M+</span>
+    <span class="label">Shots Analysed</span>
+  </div>
+</div>
+
+<p>For context, a PPG baseline managed 55% accuracy and 0.51 AUC, while the Random Forest reached 61% accuracy and 0.63 AUC. In basketball&mdash;a high-volume, inherently noisy sport&mdash;these numbers are on par with or slightly above prior research. The model isn't meant to nail every shot; it's meant to differentiate shot quality at scale.</p>
+
+<h3>What Drives Shot Success?</h3>
+
+<p>SHAP feature importance confirmed the intuitions baked into the model design. Shot distance was the single most influential factor by a wide margin: further shots lower success probability, closer shots raise it. Specific shot types ranked next&mdash;dunks boost probability (they require proximity to the rim), hook shots lower it. FG% and PPG followed, validating the inclusion of player-level offensive history. Time remaining, defensive rating, and recent form all contributed meaningfully, though with smaller effect sizes.</p>
+
+<div class="pullquote">The combined effect of features in a multivariate model reveals what no single stat can: why some shots are worth taking and others aren't.</div>
+
+<h2>From Probabilities to Expected Points</h2>
+
+<p>The model's predicted probability for each shot is multiplied by the shot's value (2 or 3 points, or 1 for free throws) to produce expected points:</p>
+
+<div class="formula-block">
+  <span class="label">Expected Points</span>
+  <code>xPts = P(success) &times; Shot Value</code><br><br>
+  A 2-point jump shot with P(success) = 0.60 yields 1.20 xPts, regardless of whether it goes in.
+</div>
+
+<p>Aggregating xPts across a game, season, or career opens up several analytical applications. The most revealing is <strong>delta points</strong>&mdash;the gap between what a player or team actually scored and what the model predicted from their shot quality.</p>
+
+<h2>Applications</h2>
+
+<h3>Player Efficiency Rankings</h3>
+
+<p>Ranking players by xPts per 100 possessions for the 2015&ndash;16 season surfaces a list dominated by centres: DeAndre Jordan, Tyson Chandler, Festus Ezeli, Clint Capela. This makes sense&mdash;centres take high-percentage shots close to the rim. The delta column adds nuance.</p>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Player</th><th>xPts</th><th>Actual Pts</th><th>xPts/100</th><th>Actual/100</th><th>Δ/100</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>DeAndre Jordan</td><td>683.6</td><td>773</td><td>140.95</td><td>159.38</td><td class="positive">+18.43</td></tr>
+    <tr><td>Tyson Chandler</td><td>411.6</td><td>426</td><td>131.50</td><td>136.10</td><td class="positive">+4.60</td></tr>
+    <tr><td>Clint Capela</td><td>232.1</td><td>248</td><td>126.80</td><td>135.52</td><td class="positive">+8.72</td></tr>
+    <tr><td>Rudy Gobert</td><td>472.0</td><td>470</td><td>126.20</td><td>125.67</td><td class="negative">−0.53</td></tr>
+    <tr><td>Dwight Howard</td><td>487.6</td><td>523</td><td>123.45</td><td>132.41</td><td class="positive">+8.96</td></tr>
+    <tr><td>Andre Iguodala</td><td>546.2</td><td>572</td><td>121.92</td><td>127.68</td><td class="positive">+5.76</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>DeAndre Jordan didn't just take the best shots&mdash;he <em>also</em> outperformed his shot quality by nearly 18.5 points per 100 possessions. Rudy Gobert, despite elite shot selection, scored almost exactly what xPts predicted&mdash;no over-performance, no under-performance. That's a fundamentally different conversation from what FG% alone can tell you.</p>
+
+<h3>Game-Level Analysis</h3>
+
+<p>Aggregating xPts across an entire game reveals which team "deserved" to win based on the quality of opportunities they created. In one analysed matchup between Dallas and Philadelphia, Dallas scored 101 points against an xPts of 102.9 (delta: −1.9), while Philadelphia scored 103 points against an xPts of just 86.0 (delta: +17.1). Philadelphia won the game, but the shots they created were far worse&mdash;they simply converted at an unsustainable rate.</p>
+
+<div class="insight">
+  <strong>Case study: 2015&ndash;16 Golden State Warriors.</strong> GSW posted a historic 73&ndash;9 record. But an xPts-based simulation of their season produced 58 wins and 26 losses. In a sample of 10 random wins, three were predicted as losses by the model. They ultimately lost the Finals to Cleveland. Were they as dominant as the record implied, or did they ride a wave of positive variance?
+</div>
+
+<h2>Limitations &amp; Future Work</h2>
+
+<p>The model has clear gaps. No player-tracking data means no information on defender proximity or shot contest level&mdash;arguably the biggest missing signal. Offensive ratings are season-level averages, which can misrepresent players who had uncharacteristically bad or good years. The fatigue proxy (travel and consecutive away games) showed limited predictive power, suggesting a more sophisticated approach is needed. And a dataset spanning two decades inevitably contains shifts in rules, pace, and style of play that the model treats as static.</p>
+
+<p>Future iterations could integrate spatial tracking data, use recurrent architectures (LSTMs) to model possession sequences, and dynamically update offensive ratings within a season rather than using a single prior-year snapshot. Extending the framework to the WNBA or European leagues would test its generalisability across different styles of basketball.</p>
+
+<h2>The Bigger Picture</h2>
+
+<p>Expected goals reshaped how football thinks about performance. There's no reason the same philosophy can't work in basketball. Yes, basketball is noisier&mdash;more shots, faster pace, wider variance. But that's precisely why separating process from outcome matters. A team that consistently generates 110 xPts per game but scores 105 isn't failing; it's unlucky. A team that scores 115 on 100 xPts isn't great; it's due for regression.</p>
+
+<p>xPts gives coaches a way to evaluate shot selection independent of results, to identify under-performing players who are actually creating great looks, and to assess defensive schemes by how much they suppress opponents' shot quality. It's a lens, not a verdict&mdash;but it's a lens that traditional stats simply cannot provide.</p>
+
+</article>
+
+<footer class="article-footer">
+  Dimitrios Kotsis · MSc Data Science Thesis · 2025
+</footer>
+
+</body>
+</html>
