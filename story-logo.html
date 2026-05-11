@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Story Logo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #060c1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: monospace;
+    }
+    .logo-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    canvas {
+      cursor: none;
+      max-width: 100%;
+      border-radius: 16px;
+    }
+    .hint {
+      color: rgba(255,255,255,0.3);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-wrapper">
+    <canvas id="storyLogo"></canvas>
+    <span class="hint">hover to interact</span>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('storyLogo');
+    const ctx    = canvas.getContext('2d');
+
+    /* ── Canvas size ── */
+    const W = 900, H = 220;
+    canvas.width  = W;
+    canvas.height = H;
+
+    /* ── Sample letter shapes from an offscreen canvas ── */
+    const off  = document.createElement('canvas');
+    off.width  = W;
+    off.height = H;
+    const oc   = off.getContext('2d');
+    oc.fillStyle    = '#ffffff';
+    oc.font         = 'bold 160px Georgia, serif';
+    oc.textAlign    = 'center';
+    oc.textBaseline = 'middle';
+    oc.fillText('STORY', W / 2, H / 2);
+    const px = oc.getImageData(0, 0, W, H).data;
+
+    /* ── Symbol pool ── */
+    const syms = [
+      '∑','∫','π','∂','√','∞','≈','Δ','∇','θ',
+      'λ','μ','σ','φ','ψ','Ω','α','β','γ','ε',
+      'ζ','η','ι','κ','ν','ξ','ρ','τ','χ',
+      '0','1','2','3','4','5','6','7','8','9',
+      '×','÷','±','∝','∈','∩','∀','∃','¬','→'
+    ];
+    const cols = ['#38bdf8','#fbbf24','#34d399','#a78bfa','#fb7185','#e2e8f0'];
+
+    /* ── Build particle array ── */
+    const parts = [];
+    const GAP   = 7;
+
+    for (let y = 0; y < H; y += GAP) {
+      for (let x = 0; x < W; x += GAP) {
+        const i = (y * W + x) * 4;
+        if (px[i + 3] > 100) {
+          parts.push({
+            x,  y,
+            ox: x, oy: y,
+            vx: 0, vy: 0,
+            s:  syms[Math.floor(Math.random() * syms.length)],
+            c:  cols[Math.floor(Math.random() * cols.length)],
+            fs: 8 + Math.random() * 4
+          });
+        }
+      }
+    }
+
+    /* ── Mouse tracking ── */
+    let mx = -9999, my = -9999;
+    let dotX = -9999, dotY = -9999;
+
+    canvas.addEventListener('mousemove', e => {
+      const r  = canvas.getBoundingClientRect();
+      const sx = W / r.width;
+      const sy = H / r.height;
+      mx   = (e.clientX - r.left) * sx;
+      my   = (e.clientY - r.top)  * sy;
+      dotX = mx; dotY = my;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      mx = -9999; my = -9999;
+      dotX = -9999; dotY = -9999;
+    });
+
+    /* ── Physics constants ── */
+    const REPEL  = 90;    /* cursor influence radius (px) */
+    const STR    = 7500;  /* repulsion strength            */
+    const SPR    = 0.055; /* spring stiffness              */
+    const DAMP   = 0.76;  /* velocity damping              */
+
+    /* ── Animation loop ── */
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+
+      for (const p of parts) {
+        /* repulsion */
+        const dx   = p.x - mx;
+        const dy   = p.y - my;
+        const d2   = dx * dx + dy * dy;
+        const dist = Math.sqrt(d2) || 0.001;
+
+        if (dist < REPEL) {
+          const f = STR / d2;
+          p.vx += (dx / dist) * f;
+          p.vy += (dy / dist) * f;
+        }
+
+        /* spring back to origin */
+        p.vx += (p.ox - p.x) * SPR;
+        p.vy += (p.oy - p.y) * SPR;
+
+        /* damping */
+        p.vx *= DAMP;
+        p.vy *= DAMP;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        /* draw — fade fast-moving particles slightly */
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        ctx.globalAlpha = Math.max(0.5, 1 - speed * 0.03);
+        ctx.fillStyle   = p.c;
+        ctx.font        = `${p.fs}px monospace`;
+        ctx.fillText(p.s, p.x - p.fs * 0.3, p.y + p.fs * 0.35);
+      }
+
+      ctx.globalAlpha = 1;
+
+      /* custom cursor dot + influence circle */
+      if (dotX > 0) {
+        /* influence ring */
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, REPEL, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth   = 1;
+        ctx.stroke();
+
+        /* cursor dot */
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.fill();
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    frame();
+  </script>
+</body>
+</html>
