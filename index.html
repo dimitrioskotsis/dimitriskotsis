@@ -7,16 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #fafaf7;
+    --bg: #f4f3ef;
     --text: #1a1a1a;
     --text-secondary: #555555;
     --text-tertiary: #888888;
     --accent: #2a5f7a;
     --accent-light: #e8f0f4;
-    --border: #e4e2dd;
-    --card-bg: #ffffff;
-    --card-hover: #fcfcfa;
-    --tag-bg: #f0eeea;
+    --border: #dddbd6;
+    --card-bg: #fcfcfa;
+    --card-hover: #f8f7f4;
+    --tag-bg: #eae9e5;
     --tag-text: #555555;
   }
 
@@ -40,7 +40,7 @@
     left: 0;
     right: 0;
     z-index: 100;
-    background: rgba(250,250,247,0.92);
+    background: rgba(244,243,239,0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
@@ -370,6 +370,8 @@
     padding: 24px 0;
     border-bottom: 1px solid var(--border);
     transition: background 0.2s;
+    text-decoration: none;
+    color: inherit;
   }
 
   .writing-item:first-child { border-top: 1px solid var(--border); }
@@ -485,7 +487,7 @@
       <li><a href="#about">About</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#skills">Skills</a></li>
-      <li><a href="#writing">Writing</a></li>
+      <li><a href="#articles">Articles</a></li>
     </ul>
   </div>
 </nav>
@@ -536,7 +538,7 @@
 <section id="projects" class="reveal">
   <div class="section-label">Selected Work</div>
   <h2 class="section-title">Projects & contributions</h2>
-  <p class="section-intro">A selection of analytical projects I've contributed to, spanning scoreboard development, qualitative research, and data visualisation.</p>
+  <p class="section-intro">A selection of analytical projects I've contributed to, spanning scoreboard development, qualitative research, data visualisation, and sports analytics.</p>
 
   <div class="project-grid">
     <div class="project-card">
@@ -586,15 +588,27 @@
       </div>
     </div>
 
-    <a href="/xptsarticle.html" class="project-card" style="text-decoration: none; color: inherit;">
+    <a href="/xpts_report.pdf" class="project-card" style="text-decoration: none; color: inherit;">
       <div class="project-type">Sports Analytics</div>
-      <h3>Expected points (xPts) model in Basketball</h3>
-      <p>Led the design and execution of a large-scale, AI-based qualitative analysis pipeline for the ST4TE Horizon Europe research project, processing ~400 interview narratives across multiple research questions using multi-step synthesis workflows and prompt engineering.</p>
+      <h3>Expected Points (xPts) Model in Basketball</h3>
+      <p>Built an expected points framework for the NBA from scratch, training an XGBoost classifier on 4M+ shots spanning 1997–2020. The model predicts shot success probability from spatial, contextual, and player-level features, enabling game and season simulations.</p>
       <div class="project-tags">
-        <span class="tag">Sports Analytics</span>
-        <span class="tag">Framework development</span>
-        <span class="tag">Desk research</span>
         <span class="tag">Python</span>
+        <span class="tag">XGBoost</span>
+        <span class="tag">Framework development</span>
+        <span class="tag">Sports Analytics</span>
+      </div>
+    </a>
+
+    <a href="/football_analytics_article.html" class="project-card" style="text-decoration: none; color: inherit;">
+      <div class="project-type">Sports Analytics</div>
+      <h3>Poisson Models for Football Prediction</h3>
+      <p>Applied Double Poisson, Bivariate Poisson, and Dixon &amp; Coles models to the 2017–18 Premier League season, estimating team-level attack and defence parameters and simulating the full league 10,000 times to assess predictive accuracy.</p>
+      <div class="project-tags">
+        <span class="tag">R</span>
+        <span class="tag">Statistical modelling</span>
+        <span class="tag">Simulation</span>
+        <span class="tag">Sports Analytics</span>
       </div>
     </a>
 
@@ -640,38 +654,30 @@
   </div>
 </section>
 
-<!-- WRITING -->
+<!-- ARTICLES -->
 <div class="section-divider"><hr></div>
-<section id="writing" class="reveal">
-  <div class="section-label">Writing</div>
+<section id="articles" class="reveal">
+  <div class="section-label">Articles</div>
   <h2 class="section-title">Articles & analysis</h2>
   <p class="section-intro">I also enjoy writing articles from time to time. Here's a list of selected pieces I've worked on.</p>
 
   <div class="writing-list">
-    <div class="writing-item">
-      <div class="writing-date">2026</div>
-      <div class="writing-content">
-        <h3>Article title goes here</h3>
-        <p>A short description of the article — what it covers, why it matters, and the key takeaway. Keep this to two lines for visual consistency.</p>
-        <span class="writing-tag">EU Policy</span>
-      </div>
-    </div>
-    <div class="writing-item">
+    <a href="/xptsarticle.html" class="writing-item">
       <div class="writing-date">2025</div>
       <div class="writing-content">
-        <h3>Another article title</h3>
-        <p>Brief description of the piece — the question it addresses, the data behind it, and the conclusion it reaches.</p>
-        <span class="writing-tag">Data Analysis</span>
+        <h3>Bringing Expected Goals to Basketball: an xPts Framework</h3>
+        <p>Adapting football's xG revolution for the NBA — a shot-level model trained on 4M+ attempts that separates skill from luck and reveals which players truly create value.</p>
+        <span class="writing-tag">Sports Analytics</span>
       </div>
-    </div>
-    <div class="writing-item">
-      <div class="writing-date">2025</div>
+    </a>
+    <a href="/football_analytics_article.html" class="writing-item">
+      <div class="writing-date">2023</div>
       <div class="writing-content">
-        <h3>A third piece of writing</h3>
-        <p>Summary of the article's argument or findings. This section is designed to be easily extended — just duplicate the block and fill in new content.</p>
-        <span class="writing-tag">Innovation</span>
+        <h3>Can Maths Predict Football? Poisson Models and the Premier League</h3>
+        <p>Testing three Poisson-based models on the 2017–18 EPL season — simulating the league 10,000 times to find out whether simple maths can capture the beautiful game's chaos.</p>
+        <span class="writing-tag">Sports Analytics</span>
       </div>
-    </div>
+    </a>
   </div>
 </section>
 

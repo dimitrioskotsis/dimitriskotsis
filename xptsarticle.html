@@ -7,15 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0c0c0e;
-    --surface: #141418;
-    --border: #25252d;
-    --text: #e8e6e1;
-    --text-muted: #8a8a95;
-    --accent: #d16a3a;
-    --accent-dim: rgba(232, 112, 58, 0.12);
-    --green: #4ade80;
-    --red: #d06868;
+    --bg: #f4f3ef;
+    --surface: #eae9e5;
+    --border: #dddbd6;
+    --text: #1a1a1a;
+    --text-body: #333333;
+    --text-muted: #6b6b6b;
+    --accent: #2a5f7a;
+    --accent-dim: rgba(42, 95, 122, 0.08);
+    --green: #2d7a4f;
+    --red: #b93d3d;
     --serif: 'Instrument Serif', Georgia, serif;
     --sans: 'DM Sans', system-ui, sans-serif;
     --mono: 'JetBrains Mono', monospace;
@@ -48,7 +49,7 @@
     transform: translateX(-50%);
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(232,112,58,0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(42,95,122,0.06) 0%, transparent 70%);
     pointer-events: none;
   }
 
@@ -72,6 +73,7 @@
     line-height: 1.12;
     letter-spacing: -0.5px;
     margin-bottom: 28px;
+    color: var(--text);
   }
 
   h1 em { color: var(--accent); font-style: italic; }
@@ -96,7 +98,7 @@
 
   article p {
     margin-bottom: 24px;
-    color: #d0cec9;
+    color: var(--text-body);
   }
 
   article h2 {
@@ -290,8 +292,8 @@
 
 <div class="formula-block">
   <span class="label">Custom Defensive Rating</span>
-  <code>FM = DFG% × (1 − DOR%) / [DFG% × (1 − DOR%) + (1 − DFG%) × DOR%]</code><br>
-  <code>DefRating = BLK × FM × (1 − 1.07 × DOR%) + DRB × (1 − FM)</code><br><br>
+  <code>FM = DFG% &times; (1 &minus; DOR%) / [DFG% &times; (1 &minus; DOR%) + (1 &minus; DFG%) &times; DOR%]</code><br>
+  <code>DefRating = BLK &times; FM &times; (1 &minus; 1.07 &times; DOR%) + DRB &times; (1 &minus; FM)</code><br><br>
   DFG% = opponent FG%&ensp;|&ensp;DOR% = opponent offensive rebound %&ensp;|&ensp;BLK = blocks/game&ensp;|&ensp;DRB = defensive rebounds/game
 </div>
 
@@ -348,13 +350,13 @@
 <div class="table-wrap">
 <table>
   <thead>
-    <tr><th>Player</th><th>xPts</th><th>Actual Pts</th><th>xPts/100</th><th>Actual/100</th><th>Δ/100</th></tr>
+    <tr><th>Player</th><th>xPts</th><th>Actual Pts</th><th>xPts/100</th><th>Actual/100</th><th>&Delta;/100</th></tr>
   </thead>
   <tbody>
     <tr><td>DeAndre Jordan</td><td>683.6</td><td>773</td><td>140.95</td><td>159.38</td><td class="positive">+18.43</td></tr>
     <tr><td>Tyson Chandler</td><td>411.6</td><td>426</td><td>131.50</td><td>136.10</td><td class="positive">+4.60</td></tr>
     <tr><td>Clint Capela</td><td>232.1</td><td>248</td><td>126.80</td><td>135.52</td><td class="positive">+8.72</td></tr>
-    <tr><td>Rudy Gobert</td><td>472.0</td><td>470</td><td>126.20</td><td>125.67</td><td class="negative">−0.53</td></tr>
+    <tr><td>Rudy Gobert</td><td>472.0</td><td>470</td><td>126.20</td><td>125.67</td><td class="negative">&minus;0.53</td></tr>
     <tr><td>Dwight Howard</td><td>487.6</td><td>523</td><td>123.45</td><td>132.41</td><td class="positive">+8.96</td></tr>
     <tr><td>Andre Iguodala</td><td>546.2</td><td>572</td><td>121.92</td><td>127.68</td><td class="positive">+5.76</td></tr>
   </tbody>
@@ -365,7 +367,7 @@
 
 <h3>Game-Level Analysis</h3>
 
-<p>Aggregating xPts across an entire game reveals which team "deserved" to win based on the quality of opportunities they created. In one analysed matchup between Dallas and Philadelphia, Dallas scored 101 points against an xPts of 102.9 (delta: −1.9), while Philadelphia scored 103 points against an xPts of just 86.0 (delta: +17.1). Philadelphia won the game, but the shots they created were far worse&mdash;they simply converted at an unsustainable rate.</p>
+<p>Aggregating xPts across an entire game reveals which team "deserved" to win based on the quality of opportunities they created. In one analysed matchup between Dallas and Philadelphia, Dallas scored 101 points against an xPts of 102.9 (delta: &minus;1.9), while Philadelphia scored 103 points against an xPts of just 86.0 (delta: +17.1). Philadelphia won the game, but the shots they created were far worse&mdash;they simply converted at an unsustainable rate.</p>
 
 <div class="insight">
   <strong>Case study: 2015&ndash;16 Golden State Warriors.</strong> GSW posted a historic 73&ndash;9 record. But an xPts-based simulation of their season produced 58 wins and 26 losses. In a sample of 10 random wins, three were predicted as losses by the model. They ultimately lost the Finals to Cleveland. Were they as dominant as the record implied, or did they ride a wave of positive variance?
@@ -386,7 +388,7 @@
 </article>
 
 <footer class="article-footer">
-  Dimitrios Kotsis · MSc Data Science Thesis · 2025
+  Dimitrios Kotsis &middot; University of Exeter &middot; 2025
 </footer>
 
 </body>
