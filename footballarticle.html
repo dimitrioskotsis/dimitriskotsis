@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting Football with Poisson Models — Dimitrios Kotsis</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f3ef;
+    --surface: #eae9e5;
+    --border: #dddbd6;
+    --text: #1a1a1a;
+    --text-body: #333333;
+    --text-muted: #6b6b6b;
+    --accent: #2a5f7a;
+    --accent-dim: rgba(42, 95, 122, 0.08);
+    --green: #2d7a4f;
+    --red: #b93d3d;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .hero {
+    padding: 100px 24px 72px;
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(42,95,122,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(36px, 5.5vw, 56px);
+    line-height: 1.12;
+    letter-spacing: -0.5px;
+    margin-bottom: 28px;
+    color: var(--text);
+  }
+  h1 em { color: var(--accent); font-style: italic; }
+  .meta {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+  .meta span + span::before {
+    content: '·';
+    margin: 0 10px;
+  }
+  article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+  article p {
+    margin-bottom: 24px;
+    color: var(--text-body);
+  }
+  article h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 30px;
+    margin: 64px 0 20px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+  }
+  article h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 18px;
+    margin: 40px 0 12px;
+    color: var(--text);
+  }
+  .pullquote {
+    border-left: 3px solid var(--accent);
+    padding: 20px 0 20px 28px;
+    margin: 40px 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--text);
+    font-style: italic;
+  }
+  .formula-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 32px 0;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text-muted);
+    overflow-x: auto;
+  }
+  .formula-block .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .formula-block code {
+    color: var(--text);
+    font-size: 15px;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 36px 0;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .stat-card .number {
+    font-family: var(--serif);
+    font-size: 36px;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--mono);
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 32px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: var(--mono);
+  }
+  thead { background: var(--surface); }
+  th {
+    text-align: left;
+    padding: 14px 16px;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  .positive { color: var(--green); }
+  .negative { color: var(--red); }
+  .insight {
+    background: var(--accent-dim);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 32px 0;
+    font-size: 15px;
+  }
+  .insight strong { color: var(--accent); }
+  .article-footer {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: var(--mono);
+  }
+  @media (max-width: 600px) {
+    .stat-row { grid-template-columns: 1fr; }
+    .hero { padding: 64px 20px 48px; }
+    article { padding: 0 20px 80px; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="tag">Sports Analytics</div>
+  <h1>Can Maths Predict Football? <em>Poisson Models</em> and the Premier League</h1>
+  <div class="meta">
+    <span>Dimitrios Kotsis</span>
+    <span>2023</span>
+    <span>10 min read</span>
+  </div>
+</header>
+<article>
+<p>Football is the most unpredictable of the major sports. A team can dominate possession, create twice as many chances, hit the woodwork three times&mdash;and still lose 1&ndash;0. With an average of roughly 2.7 goals per Premier League match, every single goal carries enormous weight. One lucky deflection can separate a title winner from a runner-up.</p>
+<p>That unpredictability is what makes the sport compelling. It is also what makes modelling it so difficult&mdash;and so interesting. This project set out to answer a deceptively simple question: <strong>given only the identity of the two teams and who is playing at home, how well can we predict the outcome of every match in a Premier League season?</strong></p>
+<div class="stat-row">
+  <div class="stat-card">
+    <span class="number">380</span>
+    <span class="label">Matches per Season</span>
+  </div>
+  <div class="stat-card">
+    <span class="number">1.53</span>
+    <span class="label">Avg Home Goals</span>
+  </div>
+  <div class="stat-card">
+    <span class="number">1.14</span>
+    <span class="label">Avg Away Goals</span>
+  </div>
+</div>
+<h2>Why Poisson?</h2>
+<p>Goals in football are rare, discrete events. A team scores 0, 1, 2, maybe 3 goals in a game&mdash;almost never more. This makes the Poisson distribution a natural candidate. It describes the probability of a given number of events occurring in a fixed interval when those events happen independently at a constant average rate. If a team scores at a rate of 1.75 goals per game, the Poisson distribution tells us the probability of them scoring 0, 1, 2, 3, or more goals in any specific match.</p>
+<p>A key property of the Poisson distribution is <strong>equidispersion</strong>: the mean equals the variance. Real Premier League data from 2017&ndash;18 shows only minor departures from this property. When plotting the mean number of goals against the variance for each team, the points cluster tightly around the diagonal line&mdash;a strong signal that the Poisson assumption holds.</p>
+<div class="pullquote">If the mean roughly equals the variance, the Poisson distribution is doing its job. And in the Premier League, it does.</div>
+<p>Of course, a raw Poisson model that treats every team the same would be useless. Manchester City and Huddersfield do not score at the same rate. The trick is to let each team have its own scoring rate, determined by its offensive strength and its opponent's defensive weakness. That is where regression comes in.</p>
+<h2>Three Models, One Idea</h2>
+<p>The project tested three progressively refined models on the full 2017&ndash;18 Premier League season. All share the same core concept: model each team's expected goals as a Poisson variable whose rate depends on team-specific attack and defence parameters plus a home advantage term.</p>
+<h3>Double Poisson</h3>
+<p>The baseline. Each team's goals follow an independent Poisson distribution. The expected number of goals for the home team in match <em>i</em> is driven by the home team's attacking strength, the away team's defensive weakness, a league-wide intercept, and a home advantage bonus. The away team's expected goals are modelled symmetrically, minus the home effect.</p>
+<div class="formula-block">
+  <span class="label">Double Poisson Model</span>
+  <code>log(&lambda;<sub>home</sub>) = &mu; + home + att<sub>home</sub> + def<sub>away</sub></code><br>
+  <code>log(&lambda;<sub>away</sub>) = &mu; + att<sub>away</sub> + def<sub>home</sub></code><br><br>
+  Each team has an attack parameter and a defence parameter. The home effect &gamma; gives a blanket bonus to whoever is playing at their own ground.
+</div>
+<p>The limitation is the independence assumption: in reality, a team conceding a goal often pushes harder to equalise, introducing a subtle correlation between the two scorelines.</p>
+<h3>Bivariate Poisson</h3>
+<p>This model extends the Double Poisson by allowing positive correlation between the two teams' goals through a shared component &lambda;<sub>3</sub>. If &lambda;<sub>3</sub> = 0, it collapses back to the Double Poisson. In the 2017&ndash;18 data, however, the observed correlation was slightly <em>negative</em> (&minus;0.13). Since the Bivariate Poisson only permits positive correlation, the model estimated &lambda;<sub>3</sub> as zero&mdash;making it identical to the Double Poisson in practice.</p>
+<h3>Dixon &amp; Coles</h3>
+<p>The most refined of the three. Dixon and Coles (1997) observed that standard Poisson models systematically mispredict low-scoring outcomes: 0&ndash;0 and 1&ndash;1 draws appear more frequently than the model expects, while 1&ndash;0 and 0&ndash;1 results are also off. Their fix is a correction factor &tau; that adjusts the joint probability only for scorelines where both teams score one or fewer goals, leaving everything else untouched.</p>
+<p>This correction introduces a dependence parameter &rho; that, unlike the Bivariate Poisson, can be negative&mdash;exactly what the data called for.</p>
+<div class="insight">
+  <strong>Key result:</strong> The Dixon &amp; Coles model achieved the best fit on the 2017&ndash;18 data, with the lowest AIC (2183.6) compared to the Double Poisson (2184.8) and Bivariate Poisson (2186.8). The improvement is modest but consistent.
+</div>
+<h2>What the Parameters Reveal</h2>
+<p>Once fitted, the model's parameters tell a clear story about each team's quality. The attacking parameter captures how many goals a team generates beyond the league average; the defensive parameter captures how many they prevent.</p>
+<p>Manchester City topped the attacking rankings by a wide margin&mdash;no surprise for a team that scored 106 goals and won the title with 100 points. Liverpool sat second in attack. On the defensive side, Manchester United led with the best defence parameter, followed by Manchester City and Tottenham. An interesting outlier was Swansea: the weakest attack in the league, but a surprisingly solid defence.</p>
+<p>The <strong>home advantage</strong> was estimated at 0.29 on the log scale. In practical terms, if two teams of equal strength met, the home side's win probability would jump from 37% to 44%&mdash;a substantial and statistically significant effect, with a 95% confidence interval of (0.17, 0.41).</p>
+<div class="stat-row">
+  <div class="stat-card">
+    <span class="number">0.29</span>
+    <span class="label">Home Effect (log)</span>
+  </div>
+  <div class="stat-card">
+    <span class="number">44%</span>
+    <span class="label">Home Win Prob (equal teams)</span>
+  </div>
+  <div class="stat-card">
+    <span class="number">&minus;0.13</span>
+    <span class="label">Goal Correlation</span>
+  </div>
+</div>
+<h2>Simulating the League</h2>
+<p>Fitting a model is one thing; testing whether it can reproduce reality is another. Using the Dixon &amp; Coles parameters, the entire 380-match season was simulated 10,000 times. For each simulated season, every match was generated from the model's predicted goal distributions, points were tallied, and the table was ranked.</p>
+<p>The results were strikingly close to reality.</p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Team</th><th>Actual Pts</th><th>Expected Pts</th><th>Diff</th><th>P(Title)</th><th>P(Top 4)</th><th>P(Releg.)</th></tr>
+</thead>
+<tbody>
+<tr><td>Man City</td><td>100</td><td>93.9</td><td class="positive">+6.1</td><td>88%</td><td>100%</td><td>0%</td></tr>
+<tr><td>Man United</td><td>81</td><td>77.7</td><td class="positive">+3.3</td><td>3%</td><td>83%</td><td>0%</td></tr>
+<tr><td>Tottenham</td><td>77</td><td>76.3</td><td class="positive">+0.7</td><td>3%</td><td>78%</td><td>0%</td></tr>
+<tr><td>Liverpool</td><td>75</td><td>79.1</td><td class="negative">&minus;4.1</td><td>5%</td><td>87%</td><td>0%</td></tr>
+<tr><td>Chelsea</td><td>70</td><td>67.7</td><td class="positive">+2.3</td><td>0%</td><td>28%</td><td>0%</td></tr>
+<tr><td>Arsenal</td><td>63</td><td>66.4</td><td class="negative">&minus;3.4</td><td>0%</td><td>22%</td><td>0%</td></tr>
+<tr><td>Burnley</td><td>54</td><td>49.3</td><td class="positive">+4.7</td><td>0%</td><td>0%</td><td>2%</td></tr>
+<tr><td>Huddersfield</td><td>37</td><td>32.7</td><td class="positive">+4.3</td><td>0%</td><td>0%</td><td>59%</td></tr>
+<tr><td>Swansea</td><td>33</td><td>33.7</td><td class="negative">&minus;0.7</td><td>0%</td><td>0%</td><td>52%</td></tr>
+<tr><td>Stoke</td><td>33</td><td>33.3</td><td class="negative">&minus;0.3</td><td>0%</td><td>0%</td><td>55%</td></tr>
+<tr><td>West Brom</td><td>31</td><td>35.9</td><td class="negative">&minus;4.9</td><td>0%</td><td>0%</td><td>41%</td></tr>
+</tbody>
+</table>
+</div>
+<p>Manchester City outperformed their expected points by about six&mdash;impressive even by the model's already high estimation. The model gave them an 88% chance of winning the title, reflecting their dominance but also acknowledging that even dominant teams face variance across 38 matches.</p>
+<div class="pullquote">Liverpool finished fourth with 75 points, but the model expected 79. According to 10,000 simulations, they had a better chance of finishing second than fourth.</div>
+<p>At the bottom, the story is just as revealing. West Brom were relegated with 31 points, but the model expected them to earn closer to 36&mdash;enough to potentially survive. Their relegation probability was only 41%, far from certain, while Huddersfield (59%) and Stoke (55%) were the teams most likely to go down. Sometimes the model says the margins between survival and relegation are razor-thin, and the final table reflects one of many possible outcomes rather than the inevitable one.</p>
+<h2>Prediction: Reading the Season at Halftime</h2>
+<p>The final test was purely predictive. Using only the first 25 matchdays of data (roughly the end of January 2018), the model was re-estimated and then asked to simulate the remaining 13 rounds.</p>
+<p>At that stage, Manchester City had 68 points and the model gave them a 100% chance of winning the title&mdash;the championship was essentially decided. The battle for Champions League places was the real drama: Chelsea (50 pts), Liverpool (50 pts), and Tottenham (48 pts) were separated by just two points. The model gave Liverpool the best odds at 84%, Chelsea 66%, and Tottenham only 50%. In reality, Tottenham outperformed expectations in the final stretch and claimed that fourth spot.</p>
+<p>Newcastle, sitting on just 24 points at matchday 25, had a 26% probability of relegation. They finished with 44 points&mdash;nearly eight more than the model expected&mdash;and survived comfortably. That gap between prediction and reality highlights both the model's value and its limits: it captures the structural dynamics of the league, but football will always produce surprises.</p>
+<h2>Limitations &amp; What Could Come Next</h2>
+<p>These models are intentionally simple. They know nothing about individual players, injuries, fatigue, tactical setups, or motivation. They use only team identities and home/away status. The fact that they still produce reasonable predictions says something about how much of football's outcome is driven by underlying team quality.</p>
+<p>More sophisticated versions could incorporate recent form (weighting recent matches more heavily using a time-decay function), player availability, or even bookmaker odds as prior information. The data used here was limited to scorelines; modern tracking data&mdash;recording player and ball positions 20 times per second&mdash;opens up entirely different modelling approaches, from expected goals (xG) to expected threat (xT).</p>
+<p>Perhaps the most interesting extension would be team-specific home effects. This project assumed every team benefits equally from playing at home, but anyone who has watched Anfield under the floodlights or visited Turf Moor on a rainy Tuesday would suspect otherwise.</p>
+<h2>The Bigger Picture</h2>
+<p>Football resists prediction. It is low-scoring, chaotic, and unforgiving of small mistakes. But that does not mean it is purely random. The Poisson-based framework captures a surprising amount of the game's structure with remarkably few inputs: just attack strength, defence strength, and home advantage.</p>
+<p>The gap between expected and actual points is where the interesting questions live. When a team consistently outperforms its expected points, is that mental strength, tactical genius, or just luck? When a team underperforms, is the manager to blame, or were the margins always going to catch up? These models do not answer those questions directly&mdash;but they give us the right baseline to start asking them.</p>
+</article>
+<footer class="article-footer">
+  Dimitrios Kotsis &middot; Athens University of Economics and Business &middot; 2023
+</footer>
+</body>
+</html>
